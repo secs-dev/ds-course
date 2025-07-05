@@ -8,3 +8,5 @@
 #
 # This map is used by build system to run targets as follows:
 # make run-model mytask1
+
+task0: ./task0/bin
