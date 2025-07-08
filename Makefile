@@ -5,7 +5,7 @@ CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
 			   docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
 # Maybe move tasks to some general dir
-TASKS := task-0
+TASKS := task-0 task-1 task-2
 
 
 GetCurrentBranch = $(shell git rev-parse --abbrev-ref HEAD)
