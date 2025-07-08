@@ -10,13 +10,15 @@ TASKS := task-0
 
 GetCurrentBranch = $(shell git rev-parse --abbrev-ref HEAD)
 GetStudentExecutable = $(shell make --no-print-directory -C $(TASK) -f Makefile get-path)
+CleanStudentDir = $(shell make -C $(1) -f Makefile clean)
 BUILD_STUDENT_EXECUTABLE=make -C $(TASK) -f Makefile build
+
 
 
 
 .PHONY: clean
 clean:
-	$(foreach task,$(TASKS),$(call MakeMakefile,$(task)/, clean))
+	$(foreach task,$(TASKS),$(call CleanStudentDir,$(task)))
 	rm -rf ./store
 
 .PHONY: run-ci
