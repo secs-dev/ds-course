@@ -1,24 +1,37 @@
 MAELSTROM=./maelstrom/maelstrom
-LOOKUP_MAP=./lookup.yml
-
-
-
 IMAGE_NAME=ds-course
-CONTAINER_NAME=ds-course
+CONTAINER_NAME=$(IMAGE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
 			   docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 
-get_model_binary = $(shell yq -r ".$(TASK)" $(LOOKUP_MAP))
+# Maybe move tasks to some general dir
+TASKS := task-0
+
+
+GetCurrentBranch = $(shell git rev-parse --abbrev-ref HEAD)
+GetStudentExecutable = $(shell make --no-print-directory -C $(TASK) -f Makefile get-path)
+BUILD_STUDENT_EXECUTABLE=make -C $(TASK) -f Makefile build
+
+
 
 .PHONY: clean
 clean:
+	$(foreach task,$(TASKS),$(call MakeMakefile,$(task)/, clean))
+	rm -rf ./store
 
+.PHONY: run-ci
+run-ci:
+	make -f Makefile run TASK=$(call GetCurrentBranch)
 
-.PHONY: run-model
-run-model:
+.PHONY: run
+run:
 	@if [ -z "$(TASK)" ]; then \
         echo "Error: TASK is not set"; \
         exit 1; \
     fi
-	@echo "Trying run model [$(TASK)] ..."
-	$(CONTAINER_WRAP) $(MAELSTROM) test --bin $(call get_model_binary)
+	$(CONTAINER_WRAP) make -f Makefile run-wrapped TASK=$(TASK)
+
+.PHONY: run-wrapped
+run-wrapped:
+	$(BUILD_STUDENT_EXECUTABLE)
+	$(MAELSTROM) test --bin $(call GetStudentExecutable) # + faults here somehow
