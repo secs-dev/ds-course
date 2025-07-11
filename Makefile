@@ -49,8 +49,8 @@ run:
         echo "Error: TASK env is not set";      \
         exit 1;                                 \
     fi
-	@if [ -z "$(PROG_LANG)" ]; then 			\
+	@if [ -z "$(PROG_LANG)" ]; then 		    \
         echo "Error: PROG_LANG env is not set"; \
-        exit 1; 								\
+        exit 1; 						        \
     fi
 	$(CONTAINER_WRAP) make -f Makefile clean-wrapped build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG)
