@@ -2,7 +2,7 @@ MAELSTROM=./maelstrom/maelstrom
 IMAGE_NAME=ds-course
 CONTAINER_NAME=$(IMAGE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
-			   docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
+			   docker run --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 ENTER_TASK_DIR=cd $(TASK) &&
 TASK_ENV=./$(TASK)/maelstrom.env
 
