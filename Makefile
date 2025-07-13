@@ -14,8 +14,6 @@ GO_BUILD=go build
 GO_CLEAN=go clean
 GO_TARGET_PATH=./$(TASK)/$(TASK)
 
-GetCurrentBranch = $(shell git rev-parse --abbrev-ref HEAD)
-
 .PHONY: clean-wrapped
 clean-wrapped:
 ifeq ($(PROG_LANG),rust)
@@ -46,12 +44,6 @@ export # Activate fault-injections
 .PHONY: run-wrapped
 run-wrapped:
 	$(MAELSTROM) test --bin $(TARGET_PATH) $(FAULT_INJECTIONS)
-
-.PHONY: run-ci
-run-ci:
-	TASK=$(word 1, $(subst /, ,$(call GetCurrentBranch)))       \
-	PROG_LANG=$(word 2, $(subst /, ,$(call GetCurrentBranch)))  \
-	make -f Makefile run
 
 .PHONY: run
 run:
