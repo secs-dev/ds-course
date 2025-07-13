@@ -49,8 +49,8 @@ run-wrapped:
 
 .PHONY: run-ci
 run-ci:
-	TASK=$(word 2, $(subst /, ,$(call GetCurrentBranch)))       \
-	PROG_LANG=$(word 1, $(subst /, ,$(call GetCurrentBranch)))  \
+	TASK=$(word 1, $(subst /, ,$(call GetCurrentBranch)))       \
+	PROG_LANG=$(word 2, $(subst /, ,$(call GetCurrentBranch)))  \
 	make -f Makefile run
 
 .PHONY: run
