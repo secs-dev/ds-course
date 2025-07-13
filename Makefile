@@ -4,12 +4,15 @@ CONTAINER_NAME=$(IMAGE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
 			   docker run -it --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 ENTER_TASK_DIR=cd $(TASK) &&
+TASK_ENV=./$(TASK)/maelstrom.env
 
 RUST_BUILD=cargo build --release
 RUST_CLEAN=cargo clean
+RUST_TARGET_PATH=./$(TASK)/target/release/$(TASK)
 
 GO_BUILD=go build
 GO_CLEAN=go clean
+GO_TARGET_PATH=./$(TASK)/$(TASK)
 
 GetCurrentBranch = $(shell git rev-parse --abbrev-ref HEAD)
 
@@ -32,14 +35,17 @@ else ifeq ($(PROG_LANG),go)
 	$(ENTER_TASK_DIR) $(GO_BUILD)
 endif
 
+
+ifeq ($(PROG_LANG),rust)
+TARGET_PATH := $(RUST_TARGET_PATH)
+else ifeq ($(PROG_LANG),go)
+TARGET_PATH := $(GO_TARGET_PATH)
+endif
+include $(TASK_ENV) # Include task-specific fault-injections
+export # Activate fault-injections
 .PHONY: run-wrapped
 run-wrapped:
-ifeq ($(PROG_LANG),rust)
-	# TODO DEFAULT BIN PATH
-else ifeq ($(PROG_LANG),go)
-	# TODO DEFAULT BIN PATH
-endif
-	$(MAELSTROM) test --bin # bin + faults here somehow maybe in env file in each dir
+	$(MAELSTROM) test --bin $(TARGET_PATH) $(FAULT_INJECTIONS)
 
 .PHONY: run-ci
 run-ci:

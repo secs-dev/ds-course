@@ -6,6 +6,7 @@ ARG REPO_ROOT=/ds-course
 
 RUN apt update &&   \
     apt install -y  \
+    build-essential \
     git             \
     make            \
     wget            \
