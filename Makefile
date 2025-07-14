@@ -43,7 +43,7 @@ include $(TASK_ENV) # Include task-specific fault-injections
 export # Activate fault-injections
 .PHONY: run-wrapped
 run-wrapped:
-	$(MAELSTROM) test --bin $(TARGET_PATH) $(FAULT_INJECTIONS)
+	$(MAELSTROM) test --bin $(TARGET_PATH) $(MAELSTROM_CONFIG)
 
 .PHONY: run
 run:

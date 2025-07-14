@@ -46,9 +46,6 @@ TODO
 
 ```
 ├── Dockerfile
-├── github
-│   └── workflow
-│       └── run-model.yml
 ├── lecture
 ├── maelstrom
 │   ├── doc
@@ -62,10 +59,13 @@ TODO
 ├── Makefile
 ├── README.md
 ├── task-0
+│   ├── maelstrom.env
 │   └── README.md
 ├── task-1
+│   ├── maelstrom.env
 │   └── README.md
 └── task-2
+    ├── maelstrom.env
     └── README.md
 ```
 
