@@ -61,15 +61,16 @@ TODO
 │   └── maelstrom
 ├── Makefile
 ├── README.md
-├── task-0
-│   ├── maelstrom.env
-│   └── README.md
-├── task-1
-│   ├── maelstrom.env
-│   └── README.md
-└── task-2
-    ├── maelstrom.env
-    └── README.md
+└── tasks
+    ├── echo
+    │   ├── maelstrom.env
+    │   └── README.md
+    ├── task-1
+    │   ├── maelstrom.env
+    │   └── README.md
+    └── task-2
+        ├── maelstrom.env
+        └── README.md
 ```
 
 Вам (студентам) можно только добавлять исходный код в папки задач `task-N`. Редактирование **ЛЮБЫХ** иных существующих файлов **СТРОГО ЗАПРЕЩЕНО**, включая env файлы в папках задач.
