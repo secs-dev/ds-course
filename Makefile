@@ -3,16 +3,18 @@ IMAGE_NAME=ds-course
 CONTAINER_NAME=$(IMAGE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
 			   docker run --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
-ENTER_TASK_DIR=cd $(TASK) &&
-TASK_ENV=./$(TASK)/maelstrom.env
+TASKS_FOLDER=tasks
+TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
+ENTER_TASK_DIR=cd $(TASK_PATH) &&
+TASK_ENV=$(TASK_PATH)/maelstrom.env
 
 RUST_BUILD=cargo build --release
 RUST_CLEAN=cargo clean
-RUST_TARGET_PATH=./$(TASK)/target/release/$(TASK)
+RUST_TARGET_PATH=$(TASK_PATH)/target/release/$(TASK)
 
 GO_BUILD=go build
 GO_CLEAN=go clean
-GO_TARGET_PATH=./$(TASK)/$(TASK)
+GO_TARGET_PATH=$(TASK_PATH)/$(TASK)
 
 .PHONY: clean-wrapped
 clean-wrapped:
