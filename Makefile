@@ -22,7 +22,7 @@ clean-jepsen:
 	find . -type d -name "store" -exec rm -rf {} +
 
 
-ALLOWED_TASKS := echo
+ALLOWED_TASKS := echo tso
 ALLOWED_PROG_LANGS := rust go
 .PHONY: validate
 validate:
