@@ -1,6 +1,8 @@
 # Название курса
 
-<Крутая философская фраза>
+_All happy databases are alike; each unhappy database is unhappy in its own way_
+
+– Leo Tolstoy? , Anna Concurrenina
 
 ---
 
