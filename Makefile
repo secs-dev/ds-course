@@ -1,4 +1,5 @@
-MAELSTROM=../../maelstrom/maelstrom
+ROOT_PREFIX=../..
+MAELSTROM=$(ROOT_PREFIX)/maelstrom/maelstrom
 IMAGE_NAME=ds-course
 CONTAINER_NAME=$(IMAGE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
@@ -10,11 +11,11 @@ TASK_ENV=$(TASK_PATH)/maelstrom.env
 
 RUST_BUILD=cargo build --release
 RUST_CLEAN=cargo clean
-RUST_TARGET_PATH=$(TASK_PATH)/target/release/$(TASK)
+RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/release/$(TASK)
 
 GO_BUILD=go build
 GO_CLEAN=go clean
-GO_TARGET_PATH=$(TASK_PATH)/$(TASK)
+GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 
 
 .PHONY: clean-jepsen

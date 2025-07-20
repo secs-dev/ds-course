@@ -10,7 +10,7 @@ RUN apt update &&   \
     git             \
     make            \
     wget            \
-    openjdk-21-jre  \
+    openjdk-21-jdk  \
     graphviz        \
     gnuplot         \
     curl
