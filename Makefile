@@ -9,9 +9,9 @@ TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
 ENTER_TASK_DIR=cd $(TASK_PATH) &&
 TASK_PROFILES=$(TASK_PATH)/profiles.yml
 
-RUST_BUILD=cargo build --release
+RUST_BUILD=cargo build
 RUST_CLEAN=cargo clean
-RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/release/$(TASK)
+RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/debug/$(TASK)
 
 GO_BUILD=go build
 GO_CLEAN=go clean
