@@ -7,7 +7,7 @@ CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
 TASKS_FOLDER=tasks
 TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
 ENTER_TASK_DIR=cd $(TASK_PATH) &&
-TASK_ENV=$(TASK_PATH)/maelstrom.env
+TASK_PROFILES=$(TASK_PATH)/profiles.yml
 
 RUST_BUILD=cargo build --release
 RUST_CLEAN=cargo clean
@@ -43,6 +43,14 @@ validate:
         echo "ERROR: PROG_LANG env must be one of: [$(ALLOWED_PROG_LANGS)], Got '$(PROG_LANG)'"; \
         exit 1;                                                                                  \
     fi
+	@if [ -z "$(PROFILE)" ]; then                     \
+       echo "ERROR: PROFILE env cannot be empty";    \
+       exit 1;                                         \
+    fi
+	@if [ "$(shell yq .$(PROFILE) $(TASK_PROFILES))" == "null" ]; then                     \
+      echo "ERROR: invalid task profile";    \
+      exit 1;                                         \
+   fi
 
 ifeq ($(PROG_LANG),rust)
 TARGET_PATH := $(RUST_TARGET_PATH)
@@ -67,14 +75,10 @@ else ifeq ($(PROG_LANG),go)
 	$(ENTER_TASK_DIR) $(GO_BUILD)
 endif
 
-ifneq ($(TASK),)
-include $(TASK_ENV) # Include task-specific fault-injections
-endif
-
 .PHONY: run-wrapped
 run-wrapped:
-	$(ENTER_TASK_DIR) $(MAELSTROM) test --bin $(TARGET_PATH) $(MAELSTROM_CONFIG)
+	$(ENTER_TASK_DIR) $(MAELSTROM) test --bin $(TARGET_PATH) $(shell yq .$(PROFILE) $(TASK_PROFILES))
 
 .PHONY: run
 run: validate
-	$(CONTAINER_WRAP) make -f Makefile clean-wrapped build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG)
+	$(CONTAINER_WRAP) make -f Makefile clean-wrapped build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)

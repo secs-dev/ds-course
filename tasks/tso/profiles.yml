@@ -1,0 +1,2 @@
+simple: --workload unique-ids --time-limit 5 --rate 10 --node-count 3 --concurrency 1n --availability total
+faulty: --workload unique-ids --time-limit 20 --rate 3000 --node-count 5 --concurrency 5n --availability total --nemesis partition

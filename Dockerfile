@@ -3,6 +3,9 @@ FROM ubuntu:22.04
 ARG DEFAULT_RUST_VERSION=1.88.0
 ARG DEFAULT_GO_VERSION=1.24.5
 ARG REPO_ROOT=/ds-course
+ARG YQ_VERSION=v4.45.4
+ARG YQ_BINARY=yq_linux_amd64
+
 
 RUN apt update &&   \
     apt install -y  \
@@ -14,6 +17,11 @@ RUN apt update &&   \
     graphviz        \
     gnuplot         \
     curl
+
+
+RUN wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY} -O /usr/bin/yq \
+    && chmod +x /usr/bin/yq
+
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain ${DEFAULT_RUST_VERSION}
 ENV PATH="/root/.cargo/bin:${PATH}"

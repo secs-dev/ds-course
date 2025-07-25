@@ -23,4 +23,5 @@ jobs:
         run: BRANCH=$(git rev-parse --abbrev-ref HEAD)
           TASK=$(echo "$BRANCH" | cut -d'/' -f2)
           PROG_LANG=$(echo "$BRANCH" | cut -d'/' -f3)
+          PROFILE=$(echo "$BRANCH" | cut -d'/' -f4)
           make run

@@ -1,11 +1,11 @@
 # Workloads
 
-A *workload* specifies the semantics of a distributed system: what
+A _workload_ specifies the semantics of a distributed system: what
 operations are performed, how clients submit requests to the system, what
 those requests mean, what kind of responses are expected, which errors can
 occur, and how to check the resulting history for safety.
 
-For instance, the *broadcast* workload says that clients submit `broadcast`
+For instance, the _broadcast_ workload says that clients submit `broadcast`
 messages to arbitrary servers, and can send a `read` request to obtain the
 set of all broadcasted messages. Clients mix reads and broadcast operations
 throughout the history, and at the end of the test, perform a final read
@@ -17,7 +17,6 @@ This is a reference document, automatically generated from Maelstrom's source
 code by running `lein run doc`. For each workload, it describes the general
 semantics of that workload, what errors are allowed, and the structure of RPC
 messages that you'll need to handle.
- 
 
 ## Table of Contents
 
@@ -32,17 +31,17 @@ messages that you'll need to handle.
 - [Txn-rw-register](#workload-txn-rw-register)
 - [Unique-ids](#workload-unique-ids)
 
-## Workload: Broadcast 
+## Workload: Broadcast
 
 A broadcast system. Essentially a test of eventually-consistent set
 addition, but also provides an initial `topology` message to the cluster with
-a set of neighbors for each node to use. 
+a set of neighbors for each node to use.
 
-### RPC: Topology! 
+### RPC: Topology!
 
 A topology message is sent at the start of the test, after initialization,
 and informs the node of an optional network topology to use for broadcast.
-The topology consists of a map of node IDs to lists of neighbor node IDs. 
+The topology consists of a map of node IDs to lists of neighbor node IDs.
 
 Request:
 
@@ -60,11 +59,10 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Broadcast! 
+### RPC: Broadcast!
 
 Sends a single message into the broadcast system, and requests that it be
-broadcast to everyone. Nodes respond with a simple acknowledgement message. 
+broadcast to everyone. Nodes respond with a simple acknowledgement message.
 
 Request:
 
@@ -80,10 +78,9 @@ Response:
  :in_reply_to Int}
 ```
 
+### RPC: Read
 
-### RPC: Read 
-
-Requests all messages present on a node. 
+Requests all messages present on a node.
 
 Request:
 
@@ -100,18 +97,16 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Echo 
+## Workload: Echo
 
 A simple echo workload: sends a message, and expects to get that same
-message back. 
+message back.
 
-### RPC: Echo! 
+### RPC: Echo!
 
 Clients send `echo` messages to servers with an `echo` field containing an
 arbitrary payload they'd like to have sent back. Servers should respond with
-`echo_ok` messages containing that same payload. 
+`echo_ok` messages containing that same payload.
 
 Request:
 
@@ -128,20 +123,18 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: G-counter 
+## Workload: G-counter
 
 An eventually-consistent grow-only counter, which supports increments.
 Validates that the final read on each node has a value which is the sum of
 all known (or possible) increments.
 
-See also: pn-counter, which is identical, but allows decrements. 
+See also: pn-counter, which is identical, but allows decrements.
 
-### RPC: Add! 
+### RPC: Add!
 
 Adds a non-negative integer, called `delta`, to the counter. Servers should
-respond with an `add_ok` message. 
+respond with an `add_ok` message.
 
 Request:
 
@@ -157,12 +150,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Read 
+### RPC: Read
 
 Reads the current value of the counter. Servers respond with a `read_ok`
 message containing a `value`, which should be the sum of all (known) added
-deltas. 
+deltas.
 
 Request:
 
@@ -179,17 +171,15 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: G-set 
+## Workload: G-set
 
 A grow-only set workload: clients add elements to a set, and read the
-current value of the set. 
+current value of the set.
 
-### RPC: Add! 
+### RPC: Add!
 
 Requests that a server add a single element to the set. Acknowledged by an
-`add_ok` message. 
+`add_ok` message.
 
 Request:
 
@@ -205,12 +195,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Read 
+### RPC: Read
 
 Requests the current set of all elements. Servers respond with a message
 containing an `elements` key, whose `value` is a JSON array of added
-elements. 
+elements.
 
 Request:
 
@@ -227,13 +216,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Kafka 
+## Workload: Kafka
 
 A simplified version of a Kafka-style stream processing system. Servers
-provide a set of append-only logs identified by string *keys*. Each integer
-*offset* in a log has one *message*. Offsets may be sparse: not every offset
+provide a set of append-only logs identified by string _keys_. Each integer
+_offset_ in a log has one _message_. Offsets may be sparse: not every offset
 must contain a message.
 
 A client appends a message to a log by making a `send` RPC request with the
@@ -245,7 +232,7 @@ offsets it wishes to read beginning at. The server returns a `poll_ok`
 response containing a map of keys to vectors of `[offset, message]` pairs,
 beginning at the requested offset for that key.
 
-Servers should maintain a *committed offset* for each key. Clients can
+Servers should maintain a _committed offset_ for each key. Clients can
 request that this offset be advanced by making a `commit_offsets` RPC
 request, with a map of keys to the highest offsets which that client has
 processed. Clients can also fetch known-committed offsets for a given set of
@@ -253,21 +240,21 @@ keys through a `fetch_committed_offsets` request.
 
 The checker for this workload detects a number of anomalies.
 
-If a client observes (e.g.) offset 10 of key `k1`, but *not* offset 5, and we
-know that offset 5 exists, we call that a *lost write*. If we know offset 11
-exists, but it is never observed in a poll, we call that write *unobserved*.
+If a client observes (e.g.) offset 10 of key `k1`, but _not_ offset 5, and we
+know that offset 5 exists, we call that a _lost write_. If we know offset 11
+exists, but it is never observed in a poll, we call that write _unobserved_.
 There is no recency requirement: servers are free to acknowledge a sent
 message, but not return it in any polls for an arbitrarily long time.
 
 Ideally, we expect client offsets from both sends and polls to be strictly
 monotonically increasing, and to observe every message. If offsets go
 backwards--e.g. if a client observes offset 4 then 2, or 2 then 2--we call
-that *nonomonotonic*. It's an *internal nonmonotonic* error if offsets fail
+that _nonomonotonic_. It's an _internal nonmonotonic_ error if offsets fail
 to increase in the course of a single transaction, or single poll. It's an
-*external nonmonotonic* error if offsets fail to increase *between* two
+_external nonmonotonic_ error if offsets fail to increase _between_ two
 transactions.
 
-If we skip over an offset that we know exists, we call that a *skip*. Like
+If we skip over an offset that we know exists, we call that a _skip_. Like
 nonmonotonic errors, a skip error can be internal (in a single transaction or
 poll) or external (between two transactions). For example, here is a
 poll-skip anomaly:
@@ -300,13 +287,13 @@ Kafka client's `assign`: it picks a new set of keys and offsets for
 successive `poll` operations. On assign, the client fetches committed offsets
 from the server and begins polling from those positions. Since we expect the
 offset to change on assign, external nonmonotonic and skip errors are not
-tracked across `assign` operations. 
+tracked across `assign` operations.
 
-### RPC: Send! 
+### RPC: Send!
 
 Sends a single message to a specific key. The server should assign a unique
 offset in the key for this message, and return a `send_ok` response with that
-offest. 
+offest.
 
 Request:
 
@@ -326,8 +313,7 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Poll 
+### RPC: Poll
 
 Requests messages from specific keys. The client provides a map `offsets`,
 whose keys are the keys of distinct queues, and whose values are the
@@ -341,8 +327,7 @@ instance, a client might request
 
 This means that the client would like to see messages from key "a"
 beginning with offset 2. The server is free to respond with any number of
-contiguous messages from queue "a" so long as the first message's offset is
-2. Those messages are returned as a map of keys to arrays of [offset message]
+contiguous messages from queue "a" so long as the first message's offset is 2. Those messages are returned as a map of keys to arrays of [offset message]
 pairs. For example:
 
 ```edn
@@ -352,7 +337,7 @@ pairs. For example:
 
 In queue "a", offset 2 has message 9, offset 3 has message 5, and offset 4
 has message 15. If no messages are available for a key, the server can omit
-that key from the response map altogether. 
+that key from the response map altogether.
 
 Request:
 
@@ -378,8 +363,7 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Commit_offsets! 
+### RPC: Commit_offsets!
 
 Informs the server that the client has successfully processed messages up to
 and including the given offset. For instance, if a client sends:
@@ -392,7 +376,7 @@ and including the given offset. For instance, if a client sends:
 This means that on key `k1` offsets 0, 1, and 2 (if they exist; offsets may
 be sparse) have been processed, but offsets 3 and higher have not. To avoid
 lost writes, the servers should ensure that any fresh assign of key `k1`
-starts at offset 3 (or lower). 
+starts at offset 3 (or lower).
 
 Request:
 
@@ -410,13 +394,12 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: List_committed_offsets 
+### RPC: List_committed_offsets
 
 Requests the latest committed offsets for the given array of keys. The
 server should respond with a map of keys to offsets. If a key does not exist,
 it can be omitted from the response map. Clients use this to figure out where
-to start consuming from a given key. 
+to start consuming from a given key.
 
 Request:
 
@@ -435,17 +418,15 @@ Response:
  :in_reply_to Int}
 ```
 
+## Workload: Lin-kv
 
+A workload for a linearizable key-value store.
 
-## Workload: Lin-kv 
-
-A workload for a linearizable key-value store. 
-
-### RPC: Read 
+### RPC: Read
 
 Reads the current value of a single key. Clients send a `read` request with
 the key they'd like to observe, and expect a response with the current
-`value` of that key. 
+`value` of that key.
 
 Request:
 
@@ -462,12 +443,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Write! 
+### RPC: Write!
 
 Blindly overwrites the value of a key. Creates keys if they do not presently
 exist. Servers should respond with a `read_ok` response once the write is
-complete. 
+complete.
 
 Request:
 
@@ -483,12 +463,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Cas! 
+### RPC: Cas!
 
 Atomically compare-and-sets a single key: if the value of `key` is currently
 `from`, sets it to `to`. Returns error 20 if the key doesn't exist, and 22 if
-the `from` value doesn't match. 
+the `from` value doesn't match.
 
 Request:
 
@@ -504,20 +483,18 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Pn-counter 
+## Workload: Pn-counter
 
 An eventually-consistent counter which supports increments and decrements.
 Validates that the final read on each node has a value which is the sum of
 all known (or possible) increments and decrements.
 
-See also: g-counter, which is identical, but does not allow decrements. 
+See also: g-counter, which is identical, but does not allow decrements.
 
-### RPC: Add! 
+### RPC: Add!
 
 Adds a (potentially negative) integer, called `delta`, to the counter.
-Servers should respond with an `add_ok` message. 
+Servers should respond with an `add_ok` message.
 
 Request:
 
@@ -533,12 +510,11 @@ Response:
  :in_reply_to Int}
 ```
 
-
-### RPC: Read 
+### RPC: Read
 
 Reads the current value of the counter. Servers respond with a `read_ok`
 message containing a `value`, which should be the sum of all (known) added
-deltas. 
+deltas.
 
 Request:
 
@@ -555,9 +531,7 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Txn-list-append 
+## Workload: Txn-list-append
 
 A transactional workload over a map of keys to lists of elements. Clients
 submit a single transaction via a `txn` request, and expect a
@@ -576,13 +550,13 @@ Each micro-op is a 3-element array comprising a function, key, and value:
 [f, k, v]
 ```
 
-There are two functions. A *read* observes the current value of a specific
+There are two functions. A _read_ observes the current value of a specific
 key. `["r", 5, [1, 2]]` denotes that a read of key 5 observed the list `[1,
-2]`. When clients submit reads, they leave their values `null`:  `["r", 5,
+2]`. When clients submit reads, they leave their values `null`: `["r", 5,
 null]`. The server processing the transaction should replace that value with
 whatever the observed value is for that key: `["r", 5, [1, 2]]`.
 
-An *append* adds an element to the end of the key's current value. For
+An _append_ adds an element to the end of the key's current value. For
 instance, `["append", 5, 3]` means "add 3 to the end of the list for key
 5." If key 5 were currently `[1, 2]`, the resulting value would become `[1,
 2, 3]`. Appends have values provided by the client, and are returned
@@ -592,17 +566,29 @@ For example, assume the current state of the database is `{1 [8]}`, and you
 receive a request body like:
 
 ```json
-{"type": "txn",
-"msg_id": 1,
-"txn": [["r", 1, null], ["append", 1, 6], ["append", 2, 9]]}
+{
+  "type": "txn",
+  "msg_id": 1,
+  "txn": [
+    ["r", 1, null],
+    ["append", 1, 6],
+    ["append", 2, 9]
+  ]
+}
 ```
 
 You might return a response like:
 
 ```json
-{"type": "txn_ok",
-"in_reply_to": 1,
-"txn": [["r", 1, [8]], ["append", 1, 6], ["append", 2, 9]]}
+{
+  "type": "txn_ok",
+  "in_reply_to": 1,
+  "txn": [
+    ["r", 1, [8]],
+    ["append", 1, 6],
+    ["append", 2, 9]
+  ]
+}
 ```
 
 First you read the current value of key 1, returning the list [8]. Then you
@@ -617,13 +603,13 @@ Unlike lin-kv, nonexistent keys should be returned as `null`. Lists are
 implicitly created on first append.
 
 This workload can check many kinds of consistency models. See the
-`--consistency-models` CLI option for details. 
+`--consistency-models` CLI option for details.
 
-### RPC: Txn! 
+### RPC: Txn!
 
 Requests that the node execute a single transaction. Servers respond with a
 `txn_ok` message, and a completed version of the requested transaction; e.g.
-with read values filled in. Keys and list elements may be of any type. 
+with read values filled in. Keys and list elements may be of any type.
 
 Request:
 
@@ -648,9 +634,7 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Txn-rw-register 
+## Workload: Txn-rw-register
 
 A transactional workload over a map of keys to values. Clients
 submit a single transaction via a `txn` request, and expect a
@@ -669,13 +653,13 @@ Each micro-op is a 3-element array comprising a function, key, and value:
 [f, k, v]
 ```
 
-There are two functions. A *read* observes the current value of a specific
+There are two functions. A _read_ observes the current value of a specific
 key. `["r", 5, [1, 2]]` denotes that a read of key 5 observed the list `[1,
-2]`. When clients submit reads, they leave their values `null`:  `["r", 5,
+2]`. When clients submit reads, they leave their values `null`: `["r", 5,
 null]`. The server processing the transaction should replace that value with
 whatever the observed value is for that key: `["r", 5, [1, 2]]`.
 
-A *write* replaces the value for a key. For instance, `["w", 5, 3]` means
+A _write_ replaces the value for a key. For instance, `["w", 5, 3]` means
 "set key 5's value to 3". Write values are provided by the client, and are
 returned unchanged.
 
@@ -683,17 +667,29 @@ For example, assume the current state of the database is `{1 8}`, and you
 receive a request body like:
 
 ```json
-{"type": "txn",
-"msg_id": 1,
-"txn": [["r", 1, null], ["w", 1, 6], ["w", 2, 9]]}
+{
+  "type": "txn",
+  "msg_id": 1,
+  "txn": [
+    ["r", 1, null],
+    ["w", 1, 6],
+    ["w", 2, 9]
+  ]
+}
 ```
 
 You might return a response like:
 
 ```json
-{"type": "txn_ok",
-"in_reply_to": 1,
-"txn": [["r", 1, 8], ["w", 1, 6], ["w", 2, 9]]}
+{
+  "type": "txn_ok",
+  "in_reply_to": 1,
+  "txn": [
+    ["r", 1, 8],
+    ["w", 1, 6],
+    ["w", 2, 9]
+  ]
+}
 ```
 
 First you read the current value of key 1, returning the value 8. Then you
@@ -711,15 +707,15 @@ This workload can check many kinds of consistency models. See the
 `--consistency-models` CLI option for details. Right now it only uses
 writes-follow-reads within individual transactions to infer version
 orders--this severely limits the transaction dependencies it can infer. We
-can make this configurable later. 
+can make this configurable later.
 
-### RPC: Txn! 
+### RPC: Txn!
 
 Requests that the node execute a single transaction. Servers respond with a
 `txn_ok` message, and a completed version of the requested transaction--e.g.
 with read values filled in. Keys and values may be of any type, but if you
 need types for your language, it's probably safe to assume both are
-integers. 
+integers.
 
 Request:
 
@@ -744,9 +740,7 @@ Response:
  :in_reply_to Int}
 ```
 
-
-
-## Workload: Unique-ids 
+## Workload: Unique-ids
 
 A simple workload for ID generation systems. Clients ask servers to generate
 an ID, and the server should respond with an ID. The test verifies that those
@@ -755,26 +749,23 @@ IDs are globally unique.
 Your node will receive a request body like:
 
 ```json
-{"type": "generate",
-"msg_id": 2}
+{ "type": "generate", "msg_id": 2 }
 ```
 
 And should respond with something like:
 
 ```json
-{"type": "generate_ok",
-"in_reply_to": 2,
-"id": 123}
+{ "type": "generate_ok", "in_reply_to": 2, "id": 123 }
 ```
 
 IDs may be of any type--strings, booleans, integers, floats, compound JSON
-values, etc. 
+values, etc.
 
-### RPC: Generate! 
+### RPC: Generate!
 
 Asks a node to generate a new ID. Servers respond with a generate_ok message
 containing an `id` field, which should be a globally unique value. IDs may be
-of any type. 
+of any type.
 
 Request:
 
@@ -790,6 +781,3 @@ Response:
  #schema.core.OptionalKey{:k :msg_id} Int,
  :in_reply_to Int}
 ```
-
-
-
