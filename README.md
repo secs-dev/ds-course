@@ -27,6 +27,7 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
 
 - Echo!
 - Timestamp Oracle
+- Broadcast
 - ...
 
 ---
@@ -85,9 +86,9 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
 Репозиторий управляется через систему сборки `make`.
 Переменные:
 
-- `TASK` - название задачи (соответствует имени директории задачи)
+- `TASK` - название задачи (соответствует имени директории задачи).
 - `PROG_LANG` - язык программирования.
-- `PROFILE` - профиль задачи. Доступные профили можно найти в файле `profiles.yml`
+- `PROFILE` - профиль задачи. Доступные профили можно найти в файле `profiles.yml`.
 
   Доступные варианты:
   - `rust`
@@ -103,7 +104,7 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
   make run TASK=echo PROG_LANG=rust PROFILE=1
   ```
 
-- `clean-jepsen` - удаляет артифакты jepsen во всех директориях задач
+- `clean-jepsen` - удаляет артифакты jepsen во всех директориях задач.
 
 - `submit` - сдать задачу на проверку.
 

@@ -21,11 +21,11 @@ GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 
 .PHONY: clean-jepsen
 clean-jepsen:
-	find . -type d -name "store" -exec rm -rf {} +
+	@find . -type d -name "store" -exec rm -rf {} +
 
 .PHONY: submit
 submit:
-	gh pr create 								\
+	@gh pr create 								\
 	    --repo  $(ORGANIZATION)/$(COURSE_NAME) 	\
      	--base main \
         --editor
@@ -33,8 +33,8 @@ submit:
 
 ALLOWED_TASKS := echo tso
 ALLOWED_PROG_LANGS := rust go
-.PHONY: validate
-validate:
+.PHONY: _validate
+_validate:
 	@if [ -z "$(TASK)" ]; then                  \
         echo "ERROR: TASK env cannot be empty"; \
         exit 1;                                 \
@@ -58,7 +58,7 @@ validate:
 	@if [ "$(shell yq .$(PROFILE) $(TASK_PROFILES))" == "null" ]; then                     \
       echo "ERROR: invalid task profile";    \
       exit 1;                                         \
-   fi
+    fi
 
 ifeq ($(PROG_LANG),rust)
 TARGET_PATH := $(RUST_TARGET_PATH)
@@ -66,18 +66,18 @@ else ifeq ($(PROG_LANG),go)
 TARGET_PATH := $(GO_TARGET_PATH)
 endif
 
-.PHONY: build-wrapped
-build-wrapped:
+.PHONY: _build-wrapped
+_build-wrapped:
 ifeq ($(PROG_LANG),rust)
 	$(ENTER_TASK_DIR) $(RUST_BUILD)
 else ifeq ($(PROG_LANG),go)
 	$(ENTER_TASK_DIR) $(GO_BUILD)
 endif
 
-.PHONY: run-wrapped
-run-wrapped:
+.PHONY: _run-wrapped
+_run-wrapped:
 	$(ENTER_TASK_DIR) $(MAELSTROM) test --bin $(TARGET_PATH) $(shell yq .$(PROFILE) $(TASK_PROFILES))
 
 .PHONY: run
-run: validate
-	$(CONTAINER_WRAP) make -f Makefile build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
+run: _validate
+	$(CONTAINER_WRAP) make -f Makefile _build-wrapped _run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
