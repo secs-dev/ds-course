@@ -74,10 +74,10 @@ else ifeq ($(PROG_LANG),go)
 	$(ENTER_TASK_DIR) $(GO_BUILD)
 endif
 
-.PHONY: _run-wrapped
-_run-wrapped:
+.PHONY: _sim_wrapped
+_sim_wrapped:
 	$(ENTER_TASK_DIR) $(MAELSTROM) test --bin $(TARGET_PATH) $(shell yq .$(PROFILE) $(TASK_PROFILES))
 
-.PHONY: run
-run: _validate
-	$(CONTAINER_WRAP) make -f Makefile _build-wrapped _run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
+.PHONY: sim
+sim: _validate
+	$(CONTAINER_WRAP) make -f Makefile _build-wrapped _sim_wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
