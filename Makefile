@@ -9,6 +9,8 @@ TASKS_FOLDER=tasks
 TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
 ENTER_TASK_DIR=cd $(TASK_PATH) &&
 TASK_PROFILES=$(TASK_PATH)/profiles.yml
+CURRENT_YEAR=2025
+ORGANIZATION=secs-dev-ds-course-$(CURRENT_YEAR)
 
 RUST_BUILD=cargo build
 RUST_CLEAN=cargo clean
@@ -22,6 +24,12 @@ GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 .PHONY: clean-jepsen
 clean-jepsen:
 	find . -type d -name "store" -exec rm -rf {} +
+
+.PHONY: submit
+submit:
+    gh pr create 								\
+    	--repo  $(ORGANIZATION)/$(COURSE_NAME) 	\
+     	--base main
 
 
 ALLOWED_TASKS := echo tso
