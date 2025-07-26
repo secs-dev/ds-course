@@ -13,11 +13,9 @@ CURRENT_YEAR=2025
 ORGANIZATION=secs-dev-ds-course-$(CURRENT_YEAR)
 
 RUST_BUILD=cargo build
-RUST_CLEAN=cargo clean
 RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/debug/$(TASK)
 
 GO_BUILD=go build
-GO_CLEAN=go clean
 GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 
 
@@ -27,9 +25,10 @@ clean-jepsen:
 
 .PHONY: submit
 submit:
-    gh pr create 								\
-    	--repo  $(ORGANIZATION)/$(COURSE_NAME) 	\
-     	--base main
+	gh pr create 								\
+	    --repo  $(ORGANIZATION)/$(COURSE_NAME) 	\
+     	--base main \
+        --editor
 
 
 ALLOWED_TASKS := echo tso
@@ -67,15 +66,6 @@ else ifeq ($(PROG_LANG),go)
 TARGET_PATH := $(GO_TARGET_PATH)
 endif
 
-
-.PHONY: clean-wrapped
-clean-wrapped:
-ifeq ($(PROG_LANG),rust)
-	$(ENTER_TASK_DIR) $(RUST_CLEAN)
-else ifeq ($(PROG_LANG),go)
-	$(ENTER_TASK_DIR) $(GO_CLEAN)
-endif
-
 .PHONY: build-wrapped
 build-wrapped:
 ifeq ($(PROG_LANG),rust)
@@ -90,4 +80,4 @@ run-wrapped:
 
 .PHONY: run
 run: validate
-	$(CONTAINER_WRAP) make -f Makefile clean-wrapped build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
+	$(CONTAINER_WRAP) make -f Makefile build-wrapped run-wrapped TASK=$(TASK) PROG_LANG=$(PROG_LANG) PROFILE=$(PROFILE)
