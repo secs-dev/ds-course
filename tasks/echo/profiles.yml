@@ -1,1 +1,1 @@
-simple: --workload echo --node-count 1 --time-limit 5
+1: --workload echo --node-count 1 --time-limit 5

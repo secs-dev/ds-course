@@ -98,7 +98,7 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
   Пример:
 
   ```sh
-  make run TASK=echo PROG_LANG=rust PROFILE=simple
+  make run TASK=echo PROG_LANG=rust PROFILE=1
   ```
 
 - `clean-jepsen` - удаляет артифакты jepsen во всех директориях задач

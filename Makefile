@@ -1,9 +1,10 @@
 ROOT_PREFIX=../..
 MAELSTROM=$(ROOT_PREFIX)/maelstrom/maelstrom
-IMAGE_NAME=ds-course
-CONTAINER_NAME=$(IMAGE_NAME)
+COURSE_NAME=ds-course
+IMAGE_NAME=$(COURSE_NAME)
+CONTAINER_NAME=$(COURSE_NAME)
 CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
-			   docker run -v .:/ds-course --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
+			   docker run -v .:/$(COURSE_NAME) --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 TASKS_FOLDER=tasks
 TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
 ENTER_TASK_DIR=cd $(TASK_PATH) &&
