@@ -90,10 +90,9 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
 - `TASK` - название задачи (соответствует имени директории задачи).
 - `PROG_LANG` - язык программирования.
 
-Доступные варианты:
-
-- `rust`
-- `go`
+  Доступные варианты:
+  - `rust`
+  - `go`
 
 - `PROFILE` - профиль задачи. Доступные профили можно найти в файле `profiles.yml`.
 
