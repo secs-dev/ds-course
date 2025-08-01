@@ -30,6 +30,8 @@ _All happy databases are alike; each unhappy database is unhappy in its own way_
 - Broadcast
 - ...
 
+Если задача имеет несколько профилей. Успешная сдача любого, засчитывает успешную сдачу всех предыдущих (профили идут по возрастанию: 1,2,...)
+
 ---
 
 ## Проектная работа (Consensus)
