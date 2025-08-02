@@ -14,13 +14,14 @@ ORGANIZATION=secs-dev-ds-course-$(CURRENT_YEAR)
 
 RUST_BUILD=cargo build
 RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/debug/$(TASK)
-RUST_INIT=cargo init . && cargo add async-trait maelstrom-node
+RUST_INIT=cargo init . \
+			&& cargo add async-trait maelstrom-node \
+			&& cargo add serde --features=derive
 
 GO_BUILD=go build
 GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 GO_INIT=go mod init $(COURSE_NAME)/$(TASK) \
 	&& go get github.com/jepsen-io/maelstrom/demo/go \
-	&& touch main.go \
 	&& echo 'package main\nfunc main(){}' > main.go
 
 ifeq ($(PROG_LANG),rust)
@@ -40,36 +41,36 @@ endif
 ALLOWED_PROG_LANGS := rust go
 .PHONY: _validate-lang
 _validate-lang:
-	@if [ -z "$(PROG_LANG)" ]; then                     \
-        echo "ERROR: PROG_LANG env cannot be empty";    \
-        exit 1;                                         \
+	@if [ -z "$(PROG_LANG)" ]; then \
+        echo "ERROR: PROG_LANG env cannot be empty"; \
+        exit 1; \
     fi
-	@if ! echo "$(ALLOWED_PROG_LANGS)" | grep -qw "$(PROG_LANG)"; then                           \
+	@if ! echo "$(ALLOWED_PROG_LANGS)" | grep -qw "$(PROG_LANG)"; then \
         echo "ERROR: PROG_LANG env must be one of: [$(ALLOWED_PROG_LANGS)], Got '$(PROG_LANG)'"; \
-        exit 1;                                                                                  \
+        exit 1; \
     fi
 
 ALLOWED_TASKS := echo tso broadcast
 .PHONY: _validate-task
 _validate-task:
-	@if [ -z "$(TASK)" ]; then                  \
+	@if [ -z "$(TASK)" ]; then \
         echo "ERROR: TASK env cannot be empty"; \
-        exit 1;                                 \
+        exit 1; \
     fi
-	@if ! echo "$(ALLOWED_TASKS)" | grep -qw "$(TASK)"; then                      \
+	@if ! echo "$(ALLOWED_TASKS)" | grep -qw "$(TASK)"; then \
         echo "ERROR: TASK env must be one of: [$(ALLOWED_TASKS)], Got '$(TASK)'"; \
-        exit 1;                                                                   \
+        exit 1; \
     fi
 
 .PHONY: _validate-profile
 _validate-profile:
-	@if [ -z "$(PROFILE)" ]; then                    		\
-    	echo "ERROR: PROFILE env cannot be empty";   	 	\
-     	exit 1;                                       		\
+	@if [ -z "$(PROFILE)" ]; then \
+    	echo "ERROR: PROFILE env cannot be empty"; \
+     	exit 1; \
     fi
-	@if [ "$(shell yq .$(PROFILE) $(TASK_PROFILES))" == "null" ]; then  \
-	   	echo "ERROR: invalid task profile";    							\
-	   	exit 1;															\
+	@if [ "$(shell yq .$(PROFILE) $(TASK_PROFILES))" == "null" ]; then \
+	   	echo "ERROR: invalid task profile"; \
+	   	exit 1; \
 	fi
 
 .PHONY: _sim-wrapped
@@ -95,7 +96,7 @@ clean-jepsen:
 
 .PHONY: submit
 submit:
-	@gh pr create 								\
-	    --repo  $(ORGANIZATION)/$(COURSE_NAME) 	\
-     	--base main 							\
+	@gh pr create \
+	    --repo  $(ORGANIZATION)/$(COURSE_NAME) \
+     	--base main \
         --editor
