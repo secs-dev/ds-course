@@ -3,8 +3,8 @@ MAELSTROM=$(ROOT_PREFIX)/maelstrom/maelstrom
 COURSE_NAME=ds-course
 IMAGE_NAME=$(COURSE_NAME)
 CONTAINER_NAME=$(COURSE_NAME)
-CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . && \
-			   docker run -v .:/$(COURSE_NAME) --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
+CONTAINER_WRAP=docker build -t $(IMAGE_NAME) -f Dockerfile . \
+				&& docker run -v .:/$(COURSE_NAME) --rm --name $(CONTAINER_NAME) $(IMAGE_NAME)
 TASKS_FOLDER=tasks
 TASK_PATH =./$(TASKS_FOLDER)/$(TASK)
 ENTER_TASK_DIR=cd $(TASK_PATH) &&
@@ -100,3 +100,7 @@ submit:
 		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
     	--base main \
      	--editor
+
+.PHONY: help-maelstrom
+help-maelstrom:
+	@./maelstrom/maelstrom test --help
