@@ -21,8 +21,8 @@ RUST_INIT=cargo init . \
 GO_BUILD=go build
 GO_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/$(TASK)
 GO_INIT=go mod init $(COURSE_NAME)/$(TASK) \
-	&& go get github.com/jepsen-io/maelstrom/demo/go \
-	&& echo 'package main\nfunc main(){}' > main.go
+			&& go get github.com/jepsen-io/maelstrom/demo/go \
+			&& echo 'package main\nfunc main(){}' > main.go
 
 ifeq ($(PROG_LANG),rust)
 TARGET_PATH := $(RUST_TARGET_PATH)
@@ -97,6 +97,6 @@ clean-jepsen:
 .PHONY: submit
 submit:
 	@gh pr create \
-	    --repo  $(ORGANIZATION)/$(COURSE_NAME) \
-     	--base main \
-        --editor
+		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
+    	--base main \
+     	--editor
