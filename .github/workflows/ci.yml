@@ -12,13 +12,13 @@ jobs:
   Task-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Grab student changes
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-      - name: Run task CI
+      - name: Run maelstrom simulation
         if: startsWith(github.event.pull_request.head.ref, 'task')
         run: BRANCH=$(git rev-parse --abbrev-ref HEAD)
           TASK=$(echo "$BRANCH" | cut -d'/' -f2)
