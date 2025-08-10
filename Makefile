@@ -98,7 +98,7 @@ clean-jepsen:
 .PHONY: _reset-previous-submit
 _reset-previous-submit: _validate-task _validate-lang _validate-profile
 	@if git rev-parse --verify --quiet $(TASK_BRANCH); then \
-	    git branch --delete $(TASK_BRANCH); \
+	    git branch --delete --force $(TASK_BRANCH); \
 	fi
 	@if git ls-remote --exit-code --heads origin $(TASK_BRANCH); then \
 		git push origin --delete $(TASK_BRANCH); \
@@ -109,15 +109,16 @@ submit: _reset-previous-submit sim
 	@git add ./$(TASKS_FOLDER)/$(TASK) && git commit --allow-empty --message 'Done $(TASK)'
 	@git stash -- ./$(TASKS_FOLDER)
 	@git switch --create $(TASK_BRANCH)
+	@git push --set-upstream origin $(TASK_BRANCH)
 	@gh pr create \
 		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
     	--base main \
      	--editor
 	@git switch main
 	@if git stash list | grep -q .; then \
-	    git stash pop \
+	    git stash pop; \
 	else \
-	    echo "Nothing to restore" \
+	    echo "Nothing to restore"; \
 	fi
 
 
