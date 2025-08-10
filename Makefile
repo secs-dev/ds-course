@@ -95,11 +95,14 @@ clean-jepsen:
 	@find . -type d -name "store" -exec rm -rf {} +
 
 .PHONY: submit
-submit:
+submit: sim
+	@git add . && git commit --message 'Done $(TASK)'
+	@git switch --create task/$(TASK)/$(PROG_LANG)/$(PROFILE)
 	@gh pr create \
 		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
     	--base main \
      	--editor
+	@git switch main
 
 .PHONY: help-maelstrom
 help-maelstrom:
