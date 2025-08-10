@@ -95,14 +95,21 @@ clean-jepsen:
 	@find . -type d -name "store" -exec rm -rf {} +
 
 .PHONY: submit
-submit: sim
-	@git add . && git commit --message 'Done $(TASK)'
+submit: _reset-previous-sumit sim
+	@git add ./tasks/$(TASK) && git commit --message 'Done $(TASK)'
+	@git stash
 	@git switch --create task/$(TASK)/$(PROG_LANG)/$(PROFILE)
 	@gh pr create \
 		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
     	--base main \
      	--editor
 	@git switch main
+	@if git stash list | grep -q .; then \
+	    git stash pop \
+	else \
+	    echo "Nothing to restore"
+	fi
+
 
 .PHONY: help-maelstrom
 help-maelstrom:
