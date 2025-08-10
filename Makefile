@@ -11,6 +11,7 @@ ENTER_TASK_DIR=cd $(TASK_PATH) &&
 TASK_PROFILES=$(TASK_PATH)/profiles.yml
 CURRENT_YEAR=2025
 ORGANIZATION=secs-dev-ds-course-$(CURRENT_YEAR)
+TASK_BRANCH=task/$(TASK)/$(PROG_LANG)/$(PROFILE)
 
 RUST_BUILD=cargo build
 RUST_TARGET_PATH=$(ROOT_PREFIX)/$(TASK_PATH)/target/debug/$(TASK)
@@ -94,11 +95,20 @@ endif
 clean-jepsen:
 	@find . -type d -name "store" -exec rm -rf {} +
 
+.PHONY: _reset-previous-submit
+_reset-previous-submit: _validate-task _validate-lang _validate-profile
+	@if git rev-parse --verify --quiet $(TASK_BRANCH); then \
+	    git branch --delete $(TASK_BRANCH) \
+	fi
+	@if git ls-remote --exit-code --heads origin $(TASK_BRANCH); then \
+		git push origin --delete $(TASK_BRANCH) \
+	fi
+
 .PHONY: submit
-submit: _reset-previous-sumit sim
+submit: _reset-previos-submit sim
 	@git add ./tasks/$(TASK) && git commit --message 'Done $(TASK)'
 	@git stash
-	@git switch --create task/$(TASK)/$(PROG_LANG)/$(PROFILE)
+	@git switch --create $(TASK_BRANCH) \
 	@gh pr create \
 		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
     	--base main \
@@ -107,7 +117,7 @@ submit: _reset-previous-sumit sim
 	@if git stash list | grep -q .; then \
 	    git stash pop \
 	else \
-	    echo "Nothing to restore"
+	    echo "Nothing to restore" \
 	fi
 
 
