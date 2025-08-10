@@ -106,20 +106,14 @@ _reset-previous-submit: _validate-task _validate-lang _validate-profile
 
 .PHONY: submit
 submit: _reset-previous-submit sim
+	@git switch --force --create $(TASK_BRANCH)
 	@git add ./$(TASKS_FOLDER)/$(TASK) && git commit --allow-empty --message 'Done $(TASK)'
-	@git stash -- ./$(TASKS_FOLDER)
-	@git switch --create $(TASK_BRANCH)
 	@git push --set-upstream origin $(TASK_BRANCH)
 	@gh pr create \
-		--repo  $(ORGANIZATION)/$(COURSE_NAME) \
-    	--base main \
-     	--editor
+	    --repo  $(ORGANIZATION)/$(COURSE_NAME) \
+		--base main \
+		--editor
 	@git switch main
-	@if git stash list | grep -q .; then \
-	    git stash pop; \
-	else \
-	    echo "Nothing to restore"; \
-	fi
 
 
 .PHONY: help-maelstrom
