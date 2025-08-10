@@ -95,8 +95,8 @@ endif
 clean-jepsen:
 	@find . -type d -name "store" -exec rm -rf {} +
 
-.PHONY: reject-submit
-reject-submit: _validate-task _validate-lang _validate-profile
+.PHONY: reject
+reject: _validate-task _validate-lang _validate-profile
 	@if git rev-parse --verify --quiet $(TASK_BRANCH); then \
 	    git branch --delete --force $(TASK_BRANCH); \
 	fi
@@ -105,7 +105,7 @@ reject-submit: _validate-task _validate-lang _validate-profile
 	fi
 
 .PHONY: submit
-submit: reject-submit sim
+submit: reject sim
 	@git switch --force --create $(TASK_BRANCH)
 	@git add ./$(TASKS_FOLDER)/$(TASK) && git commit --allow-empty --message 'Done $(TASK)'
 	@git push --set-upstream origin $(TASK_BRANCH)
